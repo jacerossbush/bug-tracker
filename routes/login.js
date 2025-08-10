@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { pool } = require('../db');
 const bcrypt = require('bcrypt'); 
+const jwt = require('jsonwebtoken');
+
 
 router.post('/', async (req, res) => {
     const { username, password } = req.body;
@@ -18,6 +20,8 @@ router.post('/', async (req, res) => {
         if (!passwordMatch) {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
+        const token = jwt.sign({ userId: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        res.cookie('token', token, { httpOnly: true, sameSite: 'strict' });
         res.status(200).json({ message: 'Login successful' });
     } catch (err) {
         res.status(500).json({ error: 'Login failed' });
