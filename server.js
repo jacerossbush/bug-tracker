@@ -4,6 +4,7 @@ const port = 3000;
 const { ensureDefaultTables } = require('./db');
 const registerRouter = require('./routes/register');
 const loginRouter = require('./routes/login');
+const issueRouter = require('./routes/issue');
 const authenticateToken = require('./middleware/auth');
 const cookieParser = require('cookie-parser');
 
@@ -21,6 +22,7 @@ app.get('/protected', authenticateToken, (req, res) => {
     res.json({ message: 'You are authenticated', user: req.user });
 });
 
+app.use('/issue', authenticateToken, issueRouter);
 
 app.listen(port, async () => {
     await ensureDefaultTables();
