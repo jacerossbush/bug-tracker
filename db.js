@@ -9,8 +9,8 @@ const pool = new Pool({
     port: process.env.DB_PORT
 });
 
-async function ensureUsersTable() {
-    const createTableQuery = `
+async function ensureDefaultTables() {
+    const createUsersTableQuery = `
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
             username VARCHAR(255) UNIQUE NOT NULL,
@@ -18,13 +18,29 @@ async function ensureUsersTable() {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     `;
+    const createIssuesTableQuery = `
+        CREATE TABLE IF NOT EXISTS issues (
+            id SERIAL PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            description TEXT,
+            date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            created_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+            assigned_to INTEGER REFERENCES users(id) ON DELETE SET NULL,
+            status_id INTEGER NOT NULL,
+            priority VARCHAR(50),
+            due_date TIMESTAMP,
+            last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            closed_at TIMESTAMP
+        );
+    `;
     try {
-        await pool.query(createTableQuery);
-        console.log('Checked for users table (created if missing)');
+        await pool.query(createUsersTableQuery);
+        await pool.query(createIssuesTableQuery);
+        console.log('Checked for users and issues tables (created if missing)');
     } catch (err) {
-        console.error('Error ensuring users table:', err);
+        console.error('Error ensuring tables:', err);
         process.exit(1);
     }
 }
 
-module.exports = {pool, ensureUsersTable};
+module.exports = {pool, ensureDefaultTables};

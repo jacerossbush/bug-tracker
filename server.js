@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const port = 3000;
-const { ensureUsersTable } = require('./db');
+const { ensureDefaultTables } = require('./db');
 const registerRouter = require('./routes/register');
 const loginRouter = require('./routes/login');
 const authenticateToken = require('./middleware/auth');
@@ -23,6 +23,6 @@ app.get('/protected', authenticateToken, (req, res) => {
 
 
 app.listen(port, async () => {
-    await ensureUsersTable();
+    await ensureDefaultTables();
     console.log(`Server running at http://localhost:${port}`);
 });
