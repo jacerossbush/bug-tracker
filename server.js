@@ -1,12 +1,11 @@
 const express = require('express');
 const app = express();
 const port = 3000;
-const {pool, ensureUsersTable} = require('./db');
+const { ensureUsersTable } = require('./db');
 const registerRouter = require('./routes/register');
 const loginRouter = require('./routes/login');
 const authenticateToken = require('./middleware/auth');
 const cookieParser = require('cookie-parser');
-const jwt = require('jsonwebtoken');
 
 app.use(express.json());
 app.use(cookieParser());
