@@ -3,6 +3,16 @@ const router = express.Router();
 const { pool } = require('../db');
 
 // GET /:id - Get a single issue by id
+// GET / - Get all issues
+router.get('/all', async (req, res) => {
+	try {
+		const result = await pool.query('SELECT * FROM issues ORDER BY id');
+		res.json(result.rows);
+	} catch (err) {
+		res.status(500).json({ error: 'Failed to fetch issues' });
+	}
+});
+
 router.get('/:id', async (req, res) => {
 	const { id } = req.params;
 	try {
@@ -15,15 +25,7 @@ router.get('/:id', async (req, res) => {
 		res.status(500).json({ error: 'Failed to fetch issue' });
 	}
 });
-// GET / - Get all issues
-router.get('/all', async (req, res) => {
-	try {
-		const result = await pool.query('SELECT * FROM issues ORDER BY id');
-		res.json(result.rows);
-	} catch (err) {
-		res.status(500).json({ error: 'Failed to fetch issues' });
-	}
-});
+
 
 router.post('/new', async (req, res) => {
 	const { title, description, assigned_to, status_id, priority, due_date } = req.body;
