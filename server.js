@@ -11,7 +11,10 @@ const cookieParser = require('cookie-parser');
 app.use(express.json());
 app.use(cookieParser());
 const cors = require('cors');
-app.use(cors({ origin: 'http://localhost:4200' }));
+app.use(cors({
+  origin: 'http://localhost:4200',
+  credentials: true
+}));
 
 app.get('/', (req, res) => {
     res.send('server is running')
